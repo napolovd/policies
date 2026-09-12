@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Maxim's Birthday Quest</title>
+
+<style>
+:root{
+  --bg:#f5f5f7;
+  --card:rgba(255,255,255,.88);
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --line:rgba(0,0,0,.08);
+  --accent:#0071e3;
+  --accentSoft:#eaf4ff;
+  --success:#34c759;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.98) 0%, rgba(245,245,247,1) 34%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+.wrap{
+  max-width:520px;
+  margin:0 auto;
+  padding:calc(18px + env(safe-area-inset-top)) 18px calc(44px + env(safe-area-inset-bottom));
+}
+.hero{
+  text-align:left;
+  padding:34px 4px 18px;
+}
+.emoji{
+  width:54px;
+  height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  border-radius:18px;
+  background:rgba(255,255,255,.9);
+  box-shadow:0 8px 30px rgba(0,0,0,.06);
+  margin-bottom:22px;
+}
+h1{
+  font-size:46px;
+  line-height:1.03;
+  letter-spacing:-1.4px;
+  margin:0 0 12px;
+  font-weight:750;
+}
+.subtitle{
+  color:var(--muted);
+  font-size:25px;
+  line-height:1.32;
+  max-width:460px;
+  font-weight:600;
+  color:#3a3a3c;
+}
+.panel{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.7);
+  border-radius:28px;
+  padding:22px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.8) inset,
+    0 12px 40px rgba(0,0,0,.055);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  margin:14px 0;
+}
+.small{
+  font-size:15px;
+  line-height:1.35;
+  color:var(--muted);
+}
+label.small{
+  display:block;
+  margin:4px 2px 10px;
+  font-weight:750;
+  font-size:21px;
+  color:var(--text);
+}
+input{
+  width:100%;
+  font-size:20px;
+  padding:18px 18px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  outline:none;
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 1px 2px rgba(0,0,0,.02);
+}
+input:focus{
+  border-color:rgba(0,113,227,.45);
+  box-shadow:0 0 0 4px rgba(0,113,227,.10);
+}
+button{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px 18px;
+  font-weight:700;
+  font-size:20px;
+  letter-spacing:-.2px;
+  background:var(--accent);
+  color:#fff;
+  margin-top:12px;
+  min-height:60px;
+  -webkit-tap-highlight-color:transparent;
+}
+button:active{transform:scale(.985)}
+button:disabled{opacity:.35}
+.secondary{
+  background:#fff;
+  color:var(--accent);
+  border:1px solid var(--line);
+  box-shadow:0 8px 25px rgba(0,0,0,.04);
+}
+
+.startHint{
+  margin:10px 2px 2px;
+  font-size:18px;
+  line-height:1.35;
+  color:var(--muted);
+  font-weight:600;
+}
+#startBtn:disabled{
+  background:#d1d1d6;
+  color:#7a7a80;
+  opacity:1;
+  cursor:not-allowed;
+}
+
+.progressWrap{padding:18px}
+.progressTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:16px;
+  color:var(--muted);
+  margin-bottom:12px;
+}
+.progressTop strong{
+  color:var(--text);
+  font-size:15px;
+}
+.bar{
+  height:12px;
+  background:#e9e9ec;
+  border-radius:999px;
+  overflow:hidden;
+}
+.bar > div{
+  height:100%;
+  width:0;
+  background:var(--accent);
+  transition:.35s ease;
+  border-radius:999px;
+}
+.quest{
+  display:block;
+  padding:24px 2px 28px;
+  border-bottom:1px solid var(--line);
+}
+.quest:last-child{border-bottom:0}
+.icon{
+  width:60px;
+  height:60px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+  background:#f2f2f4;
+  margin-bottom:18px;
+}
+.qbody{width:100%}
+.qtitle{
+  font-size:27px;
+  font-weight:750;
+  letter-spacing:-.35px;
+  margin:0 0 6px;
+}
+.qdesc{
+  font-size:19px;
+  line-height:1.42;
+  color:var(--muted);
+  max-width:430px;
+}
+.qbtn{
+  width:100%;
+  padding:16px 18px;
+  margin-top:12px;
+  background:var(--accentSoft);
+  color:var(--accent);
+  font-size:18px;
+  min-height:56px;
+}
+.quest.done .qbtn{
+  background:#edf9f0;
+  color:#238636;
+}
+.quest.done .qtitle{
+  text-decoration:none;
+}
+.photoBox{
+  margin-top:14px;
+  border-radius:22px;
+  overflow:hidden;
+  background:#ececef;
+  display:none;
+  position:relative;
+  box-shadow:0 10px 28px rgba(0,0,0,.07);
+}
+.photoBox img{
+  display:block;
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+}
+.uploadLabel{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:12px;
+  padding:16px 18px;
+  border-radius:16px;
+  background:#f2f2f7;
+  color:var(--accent);
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+}
+.fileInput{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+
+.savePhotoBtn{
+  width:100%;
+  margin-top:10px;
+  min-height:56px;
+  border-radius:16px;
+  background:#ffffff;
+  color:var(--accent);
+  border:1px solid var(--line);
+  font-size:18px;
+  font-weight:750;
+}
+
+.removePhoto{
+  position:absolute;
+  right:10px;
+  top:10px;
+  width:auto;
+  min-height:auto;
+  margin:0;
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(0,0,0,.58);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  font-size:12px;
+}
+.hidden{display:none}
+.finish{
+  text-align:left;
+  padding:34px 24px;
+}
+.finish .big{
+  font-size:68px;
+  margin-bottom:18px;
+}
+.finish h2{
+  font-size:40px;
+  line-height:1.05;
+  letter-spacing:-1px;
+  margin:8px 0 12px;
+}
+.finish p{
+  color:var(--muted);
+  line-height:1.45;
+}
+.badge{
+  display:inline-block;
+  background:#f2f2f7;
+  color:var(--text);
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.2px;
+  margin:0 0 16px;
+}
+
+.finishMain{
+  font-size:24px;
+  font-weight:750;
+  color:var(--text) !important;
+  margin:6px 0 8px;
+}
+.finishPrize{
+  font-size:21px;
+  font-weight:700;
+  color:var(--text) !important;
+  line-height:1.35 !important;
+  margin:0 0 22px;
+}
+.finishSave{
+  font-size:20px;
+  font-weight:650;
+  color:var(--text) !important;
+  margin:20px 0 8px;
+}
+.finalGallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:16px 0 8px;
+}
+.finalGalleryItem{
+  aspect-ratio:1/1;
+  border-radius:14px;
+  overflow:hidden;
+  background:#ececef;
+}
+.finalGalleryItem img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+footer{
+  text-align:center;
+  color:#a1a1a6;
+  font-size:12px;
+  margin-top:28px;
+}
+@media (max-width:420px){
+  h1{font-size:42px}
+  .wrap{padding-left:14px;padding-right:14px}
+  .panel{border-radius:26px;padding:20px}
+  .qtitle{font-size:26px}
+  .qdesc{font-size:18px}
+  .subtitle{font-size:23px;line-height:1.3}
+  label.small{font-size:20px}
+  .startHint{font-size:18px}
+  button{font-size:19px;min-height:58px}
+  .uploadLabel{font-size:18px;padding:16px 14px}
+}
+  .wrap{padding-left:14px;padding-right:14px}
+  .panel{border-radius:24px}
+}
+
+/* UX refinement */
+body{background:#f5f5f7;}
+.wrap{max-width:500px;padding-left:16px;padding-right:16px}
+.hero{padding:26px 2px 18px}
+.hero .emoji{margin-bottom:18px}
+.hero h1{font-size:44px;line-height:1.02;letter-spacing:-1.5px;margin-bottom:10px}
+.subtitle{font-size:24px;line-height:1.3;font-weight:700;color:#3a3a3c;max-width:100%}
+.startCard{padding:22px}
+.startHint{font-size:18px;color:#6e6e73;margin-top:10px}
+input{font-size:22px;min-height:62px;border-radius:18px}
+button{font-size:20px;min-height:62px;border-radius:18px}
+.gameHeader{padding:20px 4px 10px}
+.eyebrow{font-size:15px;font-weight:800;letter-spacing:.6px;color:#6e6e73}
+.familyName{font-size:34px;font-weight:800;letter-spacing:-.8px;margin-top:4px}
+.progressWrap{position:sticky;top:8px;z-index:4;box-shadow:0 10px 28px rgba(0,0,0,.06)}
+.progressTop{font-size:17px}
+.progressTop strong{font-size:18px}
+.quest{padding:28px 0 32px}
+.stepLabel{font-size:15px;font-weight:800;color:#6e6e73;margin-bottom:8px}
+.icon{width:64px;height:64px;font-size:34px;border-radius:20px}
+.qtitle{font-size:30px;line-height:1.08}
+.qdesc{font-size:21px;line-height:1.4;color:#3a3a3c}
+.uploadLabel,.savePhotoBtn,.qbtn{font-size:19px;min-height:58px}
+.uploadLabel{background:#0071e3;color:white}
+.savePhotoBtn{background:#f2f2f7}
+.qbtn{background:#eaf4ff}
+.quest.done{opacity:1}
+.quest.done .qtitle{color:#1d1d1f}
+.photoBox{border-radius:22px}
+.photoBox img{aspect-ratio:4/3}
+.removePhoto{font-size:14px;min-height:40px}
+.finish{text-align:center}
+.finish h2{font-size:36px}
+.finishMain{font-size:25px}
+.finishPrize{font-size:20px}
+.finalGallery{grid-template-columns:repeat(2,1fr);gap:8px}
+.finalGalleryItem{border-radius:16px}
+.secondary{margin-top:10px}
+@media (max-width:420px){
+  .hero h1{font-size:40px}
+  .subtitle{font-size:22px}
+  .familyName{font-size:31px}
+  .qtitle{font-size:28px}
+  .qdesc{font-size:20px}
+}
+
+
+/* Compact final photo grid */
+.finalGallery{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:6px;
+  width:min(100%, 330px);
+  margin:14px auto 8px;
+}
+.finalGalleryItem{
+  aspect-ratio:1/1;
+  border-radius:10px;
+  overflow:hidden;
+  background:#ececef;
+}
+.finalGalleryItem img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <section id="start">
+    <div class="hero">
+      <div class="emoji">🎉</div>
+      <h1>Семейный фото-квест</h1>
+      <div class="subtitle">День рождения Максима в Altitude Trampoline Park San Jose</div>
+    </div>
+    <div class="panel startCard">
+      <label class="small">Название семьи</label>
+      <input id="team" placeholder="Например: Ивановы" maxlength="28" autocomplete="off" inputmode="text">
+<div class="startHint">Введите фамилию семьи, чтобы начать</div>
+      <button id="startBtn" onclick="startGame()" disabled>Введите фамилию семьи</button>
+    </div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="gameHeader">
+      <div class="eyebrow">СЕМЬЯ</div>
+      <div class="familyName" id="teamName"></div>
+    </div>
+
+    <div class="panel progressWrap">
+      <div class="progressTop">
+        <span>Ваш прогресс</span><strong id="score">0 / 6</strong>
+      </div>
+      <div class="bar"><div id="bar"></div></div>
+      </div>
+
+    <div class="panel" id="quests"></div>
+
+    <button class="secondary" onclick="resetGame()">Начать заново</button>
+  </section>
+
+  <section id="finish" class="hidden">
+    <div class="panel finish">
+      <div class="big">🏆</div>
+      <div class="badge">ГОТОВО!</div>
+      <h2 id="finishTeam"></h2>
+      <p class="finishMain">Вы прошли семейный фото-квест!</p>
+      <p class="finishPrize">Покажите этот экран Кате Наполовой (маме Максима), чтобы получить приз 🎁</p>
+
+      <div class="finalGallery" id="finalGallery"></div>
+
+      <p class="finishSave">Ваши фото готовы — поделитесь ими или сохраните на телефон.</p>
+      <button onclick="saveAllPhotos()">Поделиться всеми фото</button>
+      <button class="secondary" onclick="resetGame()">Играть ещё раз</button>
+    </div>
+  </section>
+
+  <footer>13 сентября 2026</footer>
+</div>
+
+<script>
+const data = [
+  {icon:"📸", title:"Семейное фото", desc:"Сделайте ваше фото со своим ребёнком или детьми.", photo:true},
+  {icon:"🤸", title:"Прыжок 1", desc:"Сделайте фото вашего ребёнка в прыжке.", photo:true},
+  {icon:"😄", title:"Прыжок 2", desc:"А теперь ваша очередь — сделайте своё фото в прыжке 😄", photo:true},
+  {icon:"🪞", title:"Повтори за мной", desc:"Ребёнок показывает позу, а взрослый повторяет. Сделайте фото вместе.", photo:true},
+  {icon:"🦸", title:"Супергеройское фото", desc:"Сделайте совместное фото с ребёнком в позе любого супергероя.", photo:true},
+  {icon:"🎂", title:"Фото с Максимом", desc:"Найдите Максима и сделайте фото вашего ребёнка вместе с ним.", photo:true}
+];
+
+let done = [];
+let photos = [];
+
+
+function saveState(){
+  try{
+    localStorage.setItem("mqDone", JSON.stringify(done));
+    localStorage.setItem("mqPhotos", JSON.stringify(photos));
+  }catch(e){}
+}
+
+function loadState(){
+  try{
+    const d = JSON.parse(localStorage.getItem("mqDone") || "null");
+    const p = JSON.parse(localStorage.getItem("mqPhotos") || "null");
+    if(Array.isArray(d) && d.length === data.length) done = d;
+    if(Array.isArray(p) && p.length === data.length) photos = p;
+  }catch(e){}
+}
+
+
+
+function goToTop(){
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+
+  requestAnimationFrame(()=>{
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  });
+
+  setTimeout(()=>{
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, 60);
+}
+
+function startGame(){
+  const input = document.getElementById("team");
+  const name = input.value.trim();
+  if(!name){
+    input.focus();
+    updateStartButton();
+    return;
+  }
+  localStorage.setItem("mqFamily", name);
+  done = new Array(data.length).fill(false);
+  photos = new Array(data.length).fill(null);
+  document.getElementById("teamName").textContent = name;
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  render();
+  goToTop();
+}
+function render(){
+  const box = document.getElementById("quests");
+  box.innerHTML = "";
+  data.forEach((q,i)=>{
+    const row = document.createElement("div");
+    row.className = "quest" + (done[i] ? " done" : "");
+
+    const photoHtml = photos[i] ? `
+      <div class="photoBox" style="display:block">
+        <img src="${photos[i]}" alt="Фото задания">
+        <button class="removePhoto" onclick="removePhoto(${i})">Удалить</button>
+      </div>` : "";
+
+    row.innerHTML = `
+      <div class="icon">${q.icon}</div>
+      <div class="qbody">
+        <div class="stepLabel">Задание ${i+1} из ${data.length}</div>
+        <div class="qtitle">${q.title}</div>
+        <div class="qdesc">${q.desc}</div>
+        ${photoHtml}
+        ${photos[i] ? `<button class="savePhotoBtn" onclick="savePhoto(${i})">Скачать фото</button>` : ""}
+        <label class="uploadLabel" for="photo-${i}">
+          ${photos[i] ? "Заменить фото" : "Добавить фото"}
+        </label>
+        <input class="fileInput" id="photo-${i}" type="file" accept="image/*" capture="environment"
+          onchange="addPhoto(${i}, this)">
+      </div>
+      <button class="qbtn" ${photos[i] ? "" : "disabled"} onclick="toggle(${i})">
+        ${done[i] ? "✓ Готово" : "Готово"}
+      </button>
+    `;
+    box.appendChild(row);
+  });
+  const n = done.filter(Boolean).length;
+  document.getElementById("score").textContent = `${n} / ${data.length}`;
+  document.getElementById("bar").style.width = `${n/data.length*100}%`;
+  if(n === data.length){
+    setTimeout(showFinish, 450);
+  }
+}
+
+function addPhoto(i, input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      const max = 1200;
+      let w = img.width, h = img.height;
+      const scale = Math.min(1, max / Math.max(w,h));
+      w = Math.round(w * scale);
+      h = Math.round(h * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, w, h);
+      photos[i] = canvas.toDataURL("image/jpeg", .78);
+      done[i] = true;
+      saveState();
+      render();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+
+function savePhoto(i){
+  if(!photos[i]) return;
+  const family = (localStorage.getItem("mqFamily") || "family")
+    .replace(/[^a-zA-Z0-9а-яА-ЯёЁ_-]+/g, "_");
+  const a = document.createElement("a");
+  a.href = photos[i];
+  a.download = `${family}_quest_${i+1}.jpg`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function removePhoto(i){
+  photos[i] = null;
+  done[i] = false;
+  saveState();
+  render();
+}
+
+function toggle(i){
+  done[i] = !done[i];
+  saveState();
+  render();
+}
+function showFinish(){
+  const name = localStorage.getItem("mqFamily") || "Ваша семья";
+  document.getElementById("finishTeam").textContent = "Семья " + name;
+  renderFinalGallery();
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("finish").classList.remove("hidden");
+  goToTop();
+  if(navigator.vibrate) navigator.vibrate([80,60,120]);
+}
+
+function renderFinalGallery(){
+  const gallery = document.getElementById("finalGallery");
+  gallery.innerHTML = "";
+  photos.forEach((src, i)=>{
+    if(!src) return;
+    const item = document.createElement("div");
+    item.className = "finalGalleryItem";
+    item.innerHTML = `<img src="${src}" alt="Фото ${i+1}">`;
+    gallery.appendChild(item);
+  });
+}
+
+
+
+function dataUrlToFile(dataUrl, filename){
+  const parts = dataUrl.split(",");
+  const mimeMatch = parts[0].match(/data:(.*?);base64/);
+  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+  const binary = atob(parts[1] || "");
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
+  return new File([bytes], filename, {type:mime});
+}
+
+async function saveAllPhotos(){
+  const family = (localStorage.getItem("mqFamily") || "family")
+    .replace(/[^a-zA-Z0-9а-яА-ЯёЁ_-]+/g, "_");
+
+  const files = photos
+    .map((src,i)=> src ? dataUrlToFile(src, `${family}_photo_${i+1}.jpg`) : null)
+    .filter(Boolean);
+
+  if(!files.length) return;
+
+  try{
+    if(navigator.canShare && navigator.canShare({files}) && navigator.share){
+      await navigator.share({
+        title:"Фото с дня рождения Максима",
+        text:"Семейный фото-квест в Altitude Trampoline Park San Jose",
+        files
+      });
+      return;
+    }
+
+    // Fallback: share one image if multiple-file sharing is unsupported.
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[files[0]]})){
+      await navigator.share({
+        title:"Фото с дня рождения Максима",
+        text:"Ваш браузер может поделиться только одним фото за раз.",
+        files:[files[0]]
+      });
+      alert("Этот браузер не поддерживает отправку нескольких фото одновременно. Можно сохранить фотографии по одной.");
+      return;
+    }
+
+    alert("На этом устройстве функция «Поделиться» для фотографий не поддерживается. Используйте кнопки «Скачать фото» под каждым снимком.");
+  }catch(err){
+    if(err && err.name !== "AbortError"){
+      alert("Не удалось открыть меню «Поделиться». Попробуйте ещё раз.");
+    }
+  }
+}
+
+function resetGame(){
+  done = [];
+  photos = [];
+  localStorage.removeItem("mqDone");
+  localStorage.removeItem("mqPhotos");
+  document.getElementById("team").value = localStorage.getItem("mqFamily") || "";
+  document.getElementById("finish").classList.add("hidden");
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("start").classList.remove("hidden");
+  updateStartButton();
+  goToTop();
+}
+
+
+function updateStartButton(){
+  const input = document.getElementById("team");
+  const btn = document.getElementById("startBtn");
+  const hasName = input.value.trim().length > 0;
+  btn.disabled = !hasName;
+  btn.textContent = hasName ? "Начать" : "Введите фамилию семьи";
+}
+
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+
+window.addEventListener("pageshow", ()=>{
+  goToTop();
+});
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  goToTop();
+  const teamInput = document.getElementById("team");
+  teamInput.addEventListener("input", updateStartButton);
+  teamInput.addEventListener("change", updateStartButton);
+
+  const savedFamily = localStorage.getItem("mqFamily");
+  if(savedFamily){
+    loadState();
+    if(done.length === data.length && photos.length === data.length && (done.some(Boolean) || photos.some(Boolean))){
+      document.getElementById("teamName").textContent = savedFamily;
+      document.getElementById("start").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      render();
+      goToTop();
+    }else{
+      teamInput.value = savedFamily;
+    }
+  }
+
+  updateStartButton();
+});
+
+</script>
+</body>
+</html>
